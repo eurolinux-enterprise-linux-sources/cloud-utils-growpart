@@ -1,11 +1,12 @@
 Name:		cloud-utils-growpart
 Version:	0.29
-Release:	2%{?dist}
+Release:	2%{?dist}.2
 License:	GPLv3
 Group:		System Environment/Base
 Source0:	https://launchpad.net/cloud-utils/trunk/%{version}/+download/cloud-utils-%{version}.tar.gz
 URL:		https://launchpad.net/cloud-utils
 Source1:	LICENSE
+Patch1: 0002-growpart-fix-bug-when-resizing-a-middle-partition-wi.patch
 
 BuildArch:	noarch
 
@@ -18,6 +19,8 @@ Requires:	util-linux
 # systems.
 #Requires:	gdisk
 
+
+
 %description
 This package provides the growpart script for growing a partition. It is
 primarily used in cloud images in conjunction with the dracut-modules-growroot
@@ -25,6 +28,7 @@ package to grow the root partition on first boot.
 
 %prep
 %setup -q -n cloud-utils-%{version}
+%patch1 -p1
 
 %build
 
@@ -45,6 +49,11 @@ cp man/growpart.* $RPM_BUILD_ROOT/%{_mandir}/man1/
 %doc %{_mandir}/man1/growpart.*
 
 %changelog
+* Tue Jul 09 2019 Miroslav Rezanina <mrezanin@redhat.com> - 0.29-2.el7_6.2
+- growpart: fix bug when resizing a middle partition with sgdisk [rhbz#1726564]
+- Resolves: rhbz#1726564
+  (When growing GPT partitions use [start of next - 1] instead of [start of next] as the new end sector.)
+
 * Wed Apr 19 2017 Charalampos Stratakis <cstratak@redhat.com> - 0.29-2
 - Import to RHEL 7
 Resolves: rhbz#1308711
